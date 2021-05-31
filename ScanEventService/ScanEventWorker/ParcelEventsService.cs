@@ -10,7 +10,7 @@ namespace ScanEventWorker
         private readonly IParcelService _parcelService;
         private readonly ILogger _logger;
         private readonly Timer _timer;
-        
+
         public ParcelEventsService(
             IParcelService parcelService,
             ILogger logger
@@ -24,20 +24,20 @@ namespace ScanEventWorker
 
         protected override void OnStart(string[] args)
         {
-            _timer.Interval = 60000; // runs every 60 seconds
+            System.Diagnostics.Debugger.Launch();
+            _timer.Interval = 1; // runs every 60 seconds
             _timer.Elapsed += OnTimerTick;
             _timer.Enabled = true;
             _timer.Start();
         }
         
-
         protected override void OnStop()
         {
         }
 
         private void OnTimerTick(object sender, ElapsedEventArgs args)
         {
-            _logger.LogMessage($"This is a test log");
+           _parcelService.ProcessParcel();
         }
     }
 }
