@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ServiceProcess;
+using Autofac;
+using ScanEventWorker.Logging;
+using ScanEventWorker.Logging.Interfaces;
+using ScanEventWorker.Repository;
+using ScanEventWorker.Repository.Interfaces;
+using ScanEventWorker.Services;
+using ScanEventWorker.Services.Interfaces;
 
 namespace ScanEventWorker
 {
@@ -14,12 +16,22 @@ namespace ScanEventWorker
         /// </summary>
         static void Main()
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
-            {
-                new Service1()
-            };
-            ServiceBase.Run(ServicesToRun);
+            var containerBuilder = new ContainerBuilder();
+
+            // windows service
+            containerBuilder.RegisterType<ParcelEventsService>().AsSelf().InstancePerLifetimeScope();
+            
+            // service classes
+            containerBuilder.RegisterType<ParcelService>().As<IParcelService>().InstancePerLifetimeScope();
+
+            // repository classes
+            containerBuilder.RegisterType<ParcelRepository>().As<IParcelRepository>().InstancePerLifetimeScope();
+
+            // logging
+            containerBuilder.RegisterType<Logger>().As<ILogger>().InstancePerLifetimeScope();
+            
+            var container = containerBuilder.Build();
+            ServiceBase.Run(container.Resolve<ParcelEventsService>());
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ScanEventWorker
 {
-    partial class Service1
+    partial class ParcelEventsService
     {
         /// <summary> 
         /// Required designer variable.
