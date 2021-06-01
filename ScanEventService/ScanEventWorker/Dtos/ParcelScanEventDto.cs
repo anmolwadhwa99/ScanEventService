@@ -3,7 +3,7 @@ using ScanEventWorker.Model.Enums;
 
 namespace ScanEventWorker.Dtos
 {
-    public class EventDto
+    public class ParcelScanEventDto
     {
         public int EventId { get; set; }
         public int ParcelId { get; set; }

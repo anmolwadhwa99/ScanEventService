@@ -1,12 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using ScanEventWorker.Dtos;
+using ScanEventWorker.Model;
+using ScanEventWorker.Repository.Interfaces;
 using ScanEventWorker.Services.Interfaces;
 
 namespace ScanEventWorker.Services
 {
     public class ParcelService : IParcelService
     {
+        private readonly IParcelRepository _parcelRepository;
+        
+        public ParcelService(IParcelRepository parcelRepository)
+        {
+            _parcelRepository = parcelRepository;
+        }
+        
         public void ProcessParcel()
         {
             var json = @"
@@ -30,11 +40,18 @@ namespace ScanEventWorker.Services
       }
    ]
 }";
+
+            var eventsDto = JsonConvert.DeserializeObject<ScanEventDto>(json);
+            var scanEvents = new List<ParcelScanEventHistory>();
+            var lastEventId = _parcelRepository.GetLastProcessedScanEvent();
+
+            foreach (var eventDto in eventsDto.ScanEvents)
+            {
+                scanEvents.Add(new ParcelScanEventHistory(eventDto));
+            }
             
-            var scanEvents = JsonConvert.DeserializeObject<ScanEventDto>(json);
-            var count = scanEvents.ScanEvents.Count;
-
-
+            _parcelRepository.SaveParcelEvents(scanEvents);
+            _parcelRepository.UpdateLastProcessedScanEvent(eventsDto.ScanEvents.Max(x => x.EventId));
         }
     }
 }

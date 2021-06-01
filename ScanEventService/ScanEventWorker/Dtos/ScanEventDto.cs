@@ -4,6 +4,6 @@ namespace ScanEventWorker.Dtos
 {
     public class ScanEventDto
     {
-        public IList<EventDto> ScanEvents { get; set; }
+        public IList<ParcelScanEventDto> ScanEvents { get; set; }
     }
 }

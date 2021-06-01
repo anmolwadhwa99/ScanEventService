@@ -1,5 +1,6 @@
 ﻿using System.ServiceProcess;
 using Autofac;
+using ScanEventWorker.Database.Context;
 using ScanEventWorker.Logging;
 using ScanEventWorker.Logging.Interfaces;
 using ScanEventWorker.Repository;
@@ -16,6 +17,12 @@ namespace ScanEventWorker
         /// </summary>
         static void Main()
         {
+            var container = SetupDiContainer(); 
+            ServiceBase.Run(container.Resolve<ParcelEventsService>());
+        }
+
+        private static IContainer SetupDiContainer()
+        {
             var containerBuilder = new ContainerBuilder();
 
             // windows service
@@ -30,8 +37,10 @@ namespace ScanEventWorker
             // logging
             containerBuilder.RegisterType<Logger>().As<ILogger>().InstancePerLifetimeScope();
             
-            var container = containerBuilder.Build();
-            ServiceBase.Run(container.Resolve<ParcelEventsService>());
+            // database context
+            containerBuilder.RegisterType<DatabaseContext>().AsSelf().InstancePerLifetimeScope();
+
+            return containerBuilder.Build();
         }
     }
 }
