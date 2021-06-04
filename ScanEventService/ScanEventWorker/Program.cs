@@ -1,4 +1,6 @@
-﻿using System.ServiceProcess;
+﻿using System;
+using System.Net.Http;
+using System.ServiceProcess;
 using Autofac;
 using ScanEventWorker.Database.Context;
 using ScanEventWorker.Logging;
@@ -30,6 +32,7 @@ namespace ScanEventWorker
             
             // service classes
             containerBuilder.RegisterType<ParcelService>().As<IParcelService>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<ParcelScanApiService>().As<IParcelScanApiService>().InstancePerLifetimeScope();
 
             // repository classes
             containerBuilder.RegisterType<ParcelRepository>().As<IParcelRepository>().InstancePerLifetimeScope();
@@ -39,6 +42,13 @@ namespace ScanEventWorker
             
             // database context
             containerBuilder.RegisterType<DatabaseContext>().AsSelf().InstancePerLifetimeScope();
+            
+            // http client
+            containerBuilder.Register(c => new HttpClient
+            {
+                BaseAddress = new Uri(Configuration.ServiceUrl)
+            }).As<HttpClient>().SingleInstance();
+
 
             return containerBuilder.Build();
         }

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using ScanEventWorker.Dtos;
+using System.Threading.Tasks;
+using ScanEventWorker.Logging.Interfaces;
 using ScanEventWorker.Model;
 using ScanEventWorker.Repository.Interfaces;
 using ScanEventWorker.Services.Interfaces;
@@ -10,48 +11,54 @@ namespace ScanEventWorker.Services
 {
     public class ParcelService : IParcelService
     {
+        private readonly IParcelScanApiService _parcelScanApiService;
         private readonly IParcelRepository _parcelRepository;
-        
-        public ParcelService(IParcelRepository parcelRepository)
+        private readonly ILogger _logger;
+
+        public ParcelService(IParcelRepository parcelRepository,
+            IParcelScanApiService parcelScanApiService,
+            ILogger logger
+            )
         {
             _parcelRepository = parcelRepository;
+            _parcelScanApiService = parcelScanApiService;
+            _logger = logger;
         }
         
-        public void ProcessParcel()
+        public async Task ProcessParcel()
         {
-            var json = @"
+            try
             {
-            ""ScanEvents"":[
-      {
-         ""EventId"":83269,
-         ""ParcelId"":5002,
-         ""Type"": ""PICKUP"",
-         ""CreatedDateTimeUtc"":""2021-05-11T21:11:34.1506147Z"",
-         ""StatusCode"":"""",
-         ""Device"":{
-            ""DeviceTransactionId"":83269,
-            ""DeviceId"":103
-         },
-         ""User"":{
-            ""UserId"":""NC1001"",
-            ""CarrierId"":""NC"",
-            ""RunId"":""100""
-         }
-      }
-   ]
-}";
+                var lastEventId = _parcelRepository.GetLastProcessedScanEvent();
+                _logger.LogMessage($"Getting latest parcel scan messages after event id {lastEventId}");
 
-            var eventsDto = JsonConvert.DeserializeObject<ScanEventDto>(json);
-            var scanEvents = new List<ParcelScanEventHistory>();
-            var lastEventId = _parcelRepository.GetLastProcessedScanEvent();
+                var events = await _parcelScanApiService.GetParcelScanEvents(lastEventId);
+                
+                if (events == null)
+                {
+                    return;
+                }
+                if (events.Count == 0)
+                {
+                    _logger.LogMessage("No new scan events to process...");
+                    return;
+                }
 
-            foreach (var eventDto in eventsDto.ScanEvents)
-            {
-                scanEvents.Add(new ParcelScanEventHistory(eventDto));
+                _logger.LogMessage($"Received {events.Count} scan events. Processing them now ...");
+                var scanEvents = new List<ParcelScanEventHistory>();    
+                
+                foreach (var eventDto in events)
+                {
+                    scanEvents.Add(new ParcelScanEventHistory(eventDto));
+                }
+
+                _parcelRepository.SaveParcelEvents(scanEvents);
+                _parcelRepository.UpdateLastProcessedScanEvent(events.Max(x => x.EventId));
             }
-            
-            _parcelRepository.SaveParcelEvents(scanEvents);
-            _parcelRepository.UpdateLastProcessedScanEvent(eventsDto.ScanEvents.Max(x => x.EventId));
+            catch (Exception ex)
+            {
+                _logger.LogException(ex);
+            }
         }
     }
 }

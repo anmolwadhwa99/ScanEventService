@@ -1,7 +1,9 @@
-﻿namespace ScanEventWorker.Services.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace ScanEventWorker.Services.Interfaces
 {
     public interface IParcelService
     {
-        void ProcessParcel();
+        Task ProcessParcel();
     }
 }

@@ -28,16 +28,18 @@ namespace ScanEventWorker
             _timer.Interval = 30000; // runs every 60 seconds
             _timer.Elapsed += OnTimerTick;
             _timer.Enabled = true;
+            _logger.LogMessage("Parcel scan service started");
             _timer.Start();
         }
         
         protected override void OnStop()
         {
+            _logger.LogMessage("Parcel scan service stopped");
         }
 
         private void OnTimerTick(object sender, ElapsedEventArgs args)
         {
-           _parcelService.ProcessParcel();
+            _parcelService.ProcessParcel();
         }
     }
 }

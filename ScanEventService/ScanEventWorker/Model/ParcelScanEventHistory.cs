@@ -18,6 +18,7 @@ namespace ScanEventWorker.Model
         public DateTime CreatedDateTimeUtc { get; set; }
         public string StatusCode { get; set; }
         public string RunId { get; set; }
+        public DateTime ScannedDateTimeUtc { get; set; }
 
         public ParcelScanEventHistory(ParcelScanEventDto parcelScanEventDto)
         {
@@ -27,6 +28,7 @@ namespace ScanEventWorker.Model
             CreatedDateTimeUtc = parcelScanEventDto.CreatedDateTimeUtc;
             StatusCode = parcelScanEventDto.StatusCode;
             RunId = parcelScanEventDto.User.RunId;
+            ScannedDateTimeUtc = DateTime.UtcNow;
         }
     }
 }
