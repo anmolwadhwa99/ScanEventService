@@ -29,7 +29,7 @@ namespace ScanEventWorker.Services
         {
             try
             {
-                var lastEventId = _parcelRepository.GetLastProcessedScanEvent();
+                var lastEventId = await _parcelRepository.GetLastProcessedScanEvent();
                 _logger.LogMessage($"Getting latest parcel scan messages after event id {lastEventId}");
 
                 var events = await _parcelScanApiService.GetParcelScanEvents(lastEventId);
@@ -52,8 +52,8 @@ namespace ScanEventWorker.Services
                     scanEvents.Add(new ParcelScanEventHistory(eventDto));
                 }
 
-                _parcelRepository.SaveParcelEvents(scanEvents);
-                _parcelRepository.UpdateLastProcessedScanEvent(events.Max(x => x.EventId));
+                await _parcelRepository.SaveParcelEvents(scanEvents);
+                await _parcelRepository.UpdateLastProcessedScanEvent(events.Max(x => x.EventId));
             }
             catch (Exception ex)
             {
