@@ -24,7 +24,6 @@ namespace ScanEventWorker
 
         protected override void OnStart(string[] args)
         {
-            System.Diagnostics.Debugger.Launch();
             _timer.Interval = 60000; // runs every 60 seconds
             _timer.Elapsed += OnTimerTick;
             _timer.Enabled = true;
