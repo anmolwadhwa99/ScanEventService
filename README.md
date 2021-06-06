@@ -22,7 +22,7 @@
 
 ## Setup required to get the service started
 * You need to install the windows service using [link](https://docs.microsoft.com/en-us/dotnet/framework/windows-services/how-to-install-and-uninstall-services)
-* The event service should show in the services application in Windows OS. It's called ScanEventService.
+* The event service should show in the services application in Windows OS. It's called **ScanEventService**.
 * The API link has been set to http://localhost/v1/scans/scanevents in appsettings. This needs to be updated to a proper service that returns the correct JSON following the API contract otherwise this service will log a 404 error in logs.log
 * Futhermore, a local database called EventScanner was setup to develop this application. This needs to be updated to your local database otherwise this application will not be able to store event data. 
 * Before running the application, the 'update-database' command needs to run to setup the database schema. This can be done using this [link](https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-first.aspx#:~:text=Execute%20the%20Update%2DDatabase%20command,know%20more%20about%20the%20command)
