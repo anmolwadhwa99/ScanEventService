@@ -11,7 +11,7 @@
 
 
 ## Improvements required to productionise the application
-* A proper databsae schema. Currently, I've created two tables ParcelScanEventHistory and ParcelScanEvent. We need more tables such as Parcel (that holds parcel specific information), User (that holds information about the parcel recipient) and Device (which device is used to scan the parcel). 
+* A proper database schema. Currently, I've created two tables ParcelScanEventHistory and ParcelScanEvent. We need more tables such as Parcel (that holds parcel specific information), User (that holds information about the parcel recipient) and Device (which device is used to scan the parcel). 
 * We need to setup a database for UAT and Prod. 
 * We need to setup proper CI/CD pipelines and cloud infrasturcture. We need to build our production builds in TeamCity and we can deploy them using Octopus deploy to an AWS EC2 instance. 
 * Parcel Scan API urls for UAT and Prod. This will help greatly in testing the service and making sure it works as expected. 
