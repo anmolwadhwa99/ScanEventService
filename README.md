@@ -1,6 +1,6 @@
 # ScanEventService
 
-## Assumption made
+## Assumptions made
 * Since the instructions said to use .NET framework I decided to create a windows service using .NET framework 4.7.2. The windows service runs every 60 seconds and calls the API to get the latest parcel scan events.
 * I assumed that the event ids are consecutive and after processing a batch of events, I get the max event id and save it to the database.
 * I followed the instructions and created a table called ParcelScanEventHistory which stores the following information: EventId, ParcelId, ParcelType, CreatedDateTimeUtc, StatusCode and RunId. I added a new column called ScannedDateTimeUtc which logs the time the parcel was scanned into the system. 
@@ -23,6 +23,6 @@
 ## Setup required to get the service started
 * You need to install the windows service using [link](https://docs.microsoft.com/en-us/dotnet/framework/windows-services/how-to-install-and-uninstall-services)
 * The event service should show in the services application in Windows OS. It's called **ScanEventService**.
-* The API link has been set to http://localhost/v1/scans/scanevents in appsettings. This needs to be updated to a proper service that returns the correct JSON following the API contract otherwise this service will log a 404 error in logs.log
+* The API link has been set to http://localhost/v1/scans/scanevents in appsettings. This needs to be updated to a proper service that returns the correct JSON following the API contract otherwise this service will log a 404 error in log.log
 * Futhermore, a local database called EventScanner was setup to develop this application. This needs to be updated to your local database otherwise this application will not be able to store event data. 
 * Before running the application, the 'update-database' command needs to run to setup the database schema. This can be done using this [link](https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-first.aspx#:~:text=Execute%20the%20Update%2DDatabase%20command,know%20more%20about%20the%20command)
