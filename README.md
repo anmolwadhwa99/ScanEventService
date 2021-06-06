@@ -19,3 +19,10 @@
 ## Adding another worker to read from the same Scan Events API
 * Adding in another worker can be quite risky because this greatly increases the chance of causing race conditions. My recommendation would be to not add another worker but to scale the existing worker vertically (by adding more CPUs, RAM, SSD) so it can handle more load from the API. 
 * If we were going to add another worker, then we would need to add a locking mechanism to the tables that the worker will read and update. This can be done in SQL server using the hints TABLOCK and HOLDLOCK. The locks on the tables will be held until the transaction has either been aborted or committed. The other worker will wait until it gets access to the table and then lock it for its use.  
+
+## Setup required to get the service started
+* You need to install the windows service using [link](https://docs.microsoft.com/en-us/dotnet/framework/windows-services/how-to-install-and-uninstall-services)
+* The event service should show in the services application in Windows OS. It's called ScanEventService.
+* The API link has been set to http://localhost/v1/scans/scanevents in appsettings. This needs to be updated to a proper service that returns the correct JSON following the API contract otherwise this service will log a 404 error in logs.log
+* Futhermore, a local database called EventScanner was setup to develop this application. This needs to be updated to your local database otherwise this application will not be able to store event data. 
+* Before running the application, the 'update-database' command needs to run to setup the database schema. This can be done using this [link](https://www.entityframeworktutorial.net/code-first/code-based-migration-in-code-first.aspx#:~:text=Execute%20the%20Update%2DDatabase%20command,know%20more%20about%20the%20command)
