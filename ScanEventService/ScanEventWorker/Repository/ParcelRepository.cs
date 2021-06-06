@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Linq;
 using System.Threading.Tasks;
 using ScanEventWorker.Database.Context;
 using ScanEventWorker.Model;
